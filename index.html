@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简易自动售货系统</title>
+    <script>
+        let Product = function(name, price, stock) {
+            this.name = name;
+            this.price = price;
+            this.stock = stock;
+            this.addStock = function(quantity) {
+                this.stock += quantity;
+            };
+            this.show = function() {
+                return `${this.name}, ${this.price}元, ${this.stock}件`;
+            };
+        };
+
+        let SellingMachine = function() {
+            this.products = [
+                new Product('水', 2, 10),
+                new Product('可乐', 3, 10),
+                new Product('牛奶', 5, 10),
+            ];
+            this.list = function() {
+                let message = `销售以下商品：\n`;
+                this.products.forEach(product => {
+                    message += product.show() + "\n";
+                });
+                alert(message);
+            };
+            this.replenishment = function(name, quantity) {
+                let product = this.products.find(x => x.name == name);
+                if (!product) {
+                    alert(`不销售${name}`);
+                    return;
+                }
+                product.addStock(quantity);
+                alert(`补货成功，${product.name}剩余${product.stock}件`);
+            };
+            this.sell = function(name, quantity, money) {
+                let product = this.products.find(x => x.name == name);
+                if (!product) {
+                    alert(`不销售${name}`);
+                    return;
+                }
+                if (product.stock < quantity) {
+                    alert(`库存不足，${product.name} 仅剩 ${product.stock} 件`);
+                    return;
+                }
+                let totalPrice = quantity * product.price;
+                if (money < totalPrice) {
+                    alert(`金额不足，${name} ${quantity}件应付￥${totalPrice}`);
+                    return;
+                }
+                product.addStock(-quantity);
+                let rest = money - totalPrice;
+                alert(`成功购买商品：${name}, ${quantity}件, 共${totalPrice}元，请取走您的商品。${rest > 0 ? `以及零钱${rest}元。` : ''}`);
+                return rest;
+            };
+        };
+
+        const machine = new SellingMachine();
+    </script>
+</head>
+<body>
+    <h1>简易自动售货系统</h1>
+    <button onclick="machine.list()">查看商品列表</button>
+    <button onclick="machine.sell('饼干', 1, 0)">购买饼干</button>
+    <button onclick="machine.sell('水', 10, 20)">购买水20元</button>
+    <button onclick="machine.sell('水', 10, 1)">购买水10元</button>
+    <button onclick="machine.replenishment('水', 10)">补货水10件</button>
+    <button onclick="machine.sell('水', 15, 50)">购买水15元</button>
+</body>
+</html>
