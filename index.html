@@ -51,7 +51,6 @@
                 }
                 let totalPrice = quantity * product.price;
                 if (money < totalPrice) {
-                    alert(`金额不足，${name} ${quantity}件应付￥${totalPrice}`);
                     return;
                 }
                 product.addStock(-quantity);
